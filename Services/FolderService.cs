@@ -1,6 +1,7 @@
 ﻿using AppTest.DataAccess;
 using AppTest.DataAccess.Entities;
 using AppTest.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace AppTest.Services
@@ -13,9 +14,8 @@ namespace AppTest.Services
         {
             _context = context;
         }
-
-  
-
+        
+        [HttpPost]
         public async Task<IEnumerable<Folder>> Get(int? Id)
         {
             if (Id.HasValue)
@@ -32,9 +32,10 @@ namespace AppTest.Services
             }
         }
 
-        public Task ImportFile(byte[] file)
+        public async Task Import(IEnumerable<Folder> folders)
         {
-            throw new NotImplementedException();
+            _context.AddRange(folders);
+            await _context.SaveChangesAsync();
         }
     }
 }

@@ -1,8 +1,10 @@
-﻿using AppTest.Interfaces;
+﻿using AppTest.DataAccess.Entities;
+using AppTest.Interfaces;
 using AppTest.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using System.IO;
+using System.Text;
+using Newtonsoft.Json;
 
 namespace AppTest.Controllers
 {
@@ -10,7 +12,6 @@ namespace AppTest.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IFolderServices _folderService;
-        private object _context;
 
         public HomeController(ILogger<HomeController> logger, IFolderServices folderServices)
         {
@@ -33,6 +34,35 @@ namespace AppTest.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        private static async Task<string> ReadAsStringAsync(IFormFile file)
+        {
+            var result = new StringBuilder();
+            using (var reader =  new StreamReader(file.OpenReadStream()))
+            {
+                while (reader.Peek() >= 0)
+                    result.AppendLine(await reader.ReadLineAsync());
+            }
+
+            return result.ToString();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Import(IFormFile jsonFile)
+        {
+            if (!Path.GetFileName(jsonFile.FileName).EndsWith(".json"))
+            {
+                ViewBag.Error =  "Invalid file type";
+            }
+            else
+            {
+              var str = await ReadAsStringAsync(jsonFile);
+              var folders = JsonConvert.DeserializeObject<IEnumerable<Folder>>(str);
+              await _folderService.Import(folders);
+            }
+
+            return RedirectToAction("Index");
         }
     }
 }

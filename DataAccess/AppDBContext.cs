@@ -7,13 +7,11 @@ namespace AppTest.DataAccess
     public class AppDBContext : DbContext
     {
         public AppDBContext(DbContextOptions<AppDBContext> options) : base(options)
-
         {
         }
         public DbSet<Folder> Folder { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
-
         {
             modelBuilder.Entity<Folder>()
                 .HasKey(i => i.Id);
@@ -34,8 +32,6 @@ namespace AppTest.DataAccess
             modelBuilder.Entity<Folder>().HasData(new Folder { Id = 6, Name = "Secondary Sources", ParentId = 2 });
             modelBuilder.Entity<Folder>().HasData(new Folder { Id = 7, Name = "Process", ParentId = 4 });
             modelBuilder.Entity<Folder>().HasData(new Folder { Id = 8, Name = "Final Product", ParentId = 4 });
-
-
         }
     }
 }
