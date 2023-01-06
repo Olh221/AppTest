@@ -1,0 +1,19 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+
+@foreach( var item in ViewBag.TopDirectories)
+{
+    @item.Name
+    @foreach(var childDirectory in item.Children)
+    {
+        <div>
+             <a asp-area="" asp-controller="Home" asp-action="Index" asp-route-id="@childDirectory.Id">@childDirectory.Name</a>
+        </div>
+    }
+}
